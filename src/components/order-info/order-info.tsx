@@ -1,23 +1,40 @@
 import { FC, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSelector } from '../../services/store';
+import { selectIngredients } from '../../services/slices/ingredientsSlice';
+import { selectFeedOrders } from '../../services/slices/feedSlice';
+import { selectOrders } from '../../services/slices/orderSlice';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
-import { TIngredient } from '@utils-types';
+import { TIngredient, TOrder } from '@utils-types';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const { number } = useParams<{ number: string }>();
 
-  const ingredients: TIngredient[] = [];
+  // Получение списков данных из хранилища через внешние селекторы
+  const ingredients = useSelector(selectIngredients);
+  const feedOrders = useSelector(selectFeedOrders);
+  const profileOrders = useSelector(selectOrders);
 
-  /* Готовим данные для отображения */
+  // Поиск конкретного заказа в общей ленте или в истории личного кабинета
+  const orderData = useMemo(() => {
+    if (!number) return null;
+    const targetNumber = number.toString();
+
+    const feedOrder = feedOrders.find(
+      (item: TOrder) => item.number.toString() === targetNumber
+    );
+    if (feedOrder) return feedOrder;
+
+    const profileOrder = profileOrders.find(
+      (item: TOrder) => item.number.toString() === targetNumber
+    );
+    if (profileOrder) return profileOrder;
+
+    return null;
+  }, [number, feedOrders, profileOrders]);
+
+  // Трансформация данных заказа и расчет стоимости для отображения
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -30,7 +47,9 @@ export const OrderInfo: FC = () => {
     const ingredientsInfo = orderData.ingredients.reduce(
       (acc: TIngredientsWithCount, item) => {
         if (!acc[item]) {
-          const ingredient = ingredients.find((ing) => ing._id === item);
+          const ingredient = ingredients.find(
+            (ing: TIngredient) => ing._id === item
+          );
           if (ingredient) {
             acc[item] = {
               ...ingredient,
