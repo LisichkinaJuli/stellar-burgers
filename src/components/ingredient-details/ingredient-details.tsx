@@ -20,5 +20,26 @@ export const IngredientDetails: FC = () => {
     return <Preloader />;
   }
 
-  return <IngredientDetailsUI ingredientData={ingredientData} />;
+  // Заворачиваем в центрирующий контейнер с заголовком, как в макете Figma при открытии на отдельной странице
+  return (
+    <div
+      className='flex flex-column styles.container'
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '80vh',
+        textAlign: 'center'
+      }}
+    >
+      <h2
+        className='text text_type_main-large mt-10'
+        style={{ width: '100%', maxWidth: '600px', textAlign: 'center' }}
+      >
+        Детали ингредиента
+      </h2>
+      <IngredientDetailsUI ingredientData={ingredientData} />
+    </div>
+  );
 };
