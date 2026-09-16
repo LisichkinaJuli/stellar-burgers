@@ -38,14 +38,10 @@ const feedSlice = createSlice({
       .addCase(fetchFeed.fulfilled, (state, action) => {
         state.isLoading = false;
 
-        // Проверка структуры ответа API
-        if (Array.isArray(action.payload)) {
-          state.orders = action.payload;
-        } else if (action.payload && typeof action.payload === 'object') {
-          state.orders = action.payload.orders || [];
-          state.total = action.payload.total || 0;
-          state.totalToday = action.payload.totalToday || 0;
-        }
+        // Напрямую извлекаем поля из объекта ответа API
+        state.orders = action.payload.orders || [];
+        state.total = action.payload.total || 0;
+        state.totalToday = action.payload.totalToday || 0;
       })
       .addCase(fetchFeed.rejected, (state, action) => {
         state.isLoading = false;
