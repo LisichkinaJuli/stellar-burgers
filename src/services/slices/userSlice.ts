@@ -8,6 +8,7 @@ import {
   TLoginData,
   TRegisterData
 } from '../../utils/burger-api';
+import { setCookie, getCookie } from '../../utils/cookie';
 import { TUser } from '@utils-types';
 import { RootState } from '../store';
 
@@ -17,7 +18,7 @@ export const registerUser = createAsyncThunk(
   async (data: TRegisterData) => {
     const res = await registerUserApi(data);
     localStorage.setItem('refreshToken', res.refreshToken);
-    localStorage.setItem('accessToken', res.accessToken);
+    setCookie('accessToken', res.accessToken);
     return res.user;
   }
 );
@@ -28,7 +29,7 @@ export const loginUser = createAsyncThunk(
   async (data: TLoginData) => {
     const res = await loginUserApi(data);
     localStorage.setItem('refreshToken', res.refreshToken);
-    localStorage.setItem('accessToken', res.accessToken);
+    setCookie('accessToken', res.accessToken);
     return res.user;
   }
 );
@@ -37,19 +38,19 @@ export const loginUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk('user/logout', async () => {
   await logoutApi();
   localStorage.removeItem('refreshToken');
-  localStorage.removeItem('accessToken');
+  setCookie('accessToken', '', { 'max-age': -1 });
 });
 
 // Проверка токена и получение данных профиля при обновлении страницы
 export const checkUserAuth = createAsyncThunk(
   'user/checkAuth',
   async (_, { rejectWithValue }) => {
-    if (localStorage.getItem('accessToken')) {
+    if (getCookie('accessToken')) {
       try {
         const res = await getUserApi();
         return res.user;
       } catch (error) {
-        localStorage.removeItem('accessToken');
+        setCookie('accessToken', '', { 'max-age': -1 });
         localStorage.removeItem('refreshToken');
         return rejectWithValue(error);
       }
@@ -152,7 +153,6 @@ const userSlice = createSlice({
   }
 });
 
-// Селекторы со строгим указанием глобального типа RootState вместо any
 export const selectUserData = (state: RootState) => state.user.user;
 export const selectIsAuthChecked = (state: RootState) =>
   state.user.isAuthChecked;
