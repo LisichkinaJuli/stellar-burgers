@@ -1,20 +1,26 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from '../../services/store';
+import { useDispatch, useSelector } from '../../services/store';
 import { selectIngredients } from '../../services/slices/ingredientsSlice';
 import { selectFeedOrders } from '../../services/slices/feedSlice';
-import { selectOrders } from '../../services/slices/orderSlice';
+import {
+  selectOrders,
+  fetchOrderByNumber,
+  selectOrderByNumber
+} from '../../services/slices/orderSlice';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient, TOrder } from '@utils-types';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
+  const dispatch = useDispatch();
 
   // Получение списков данных из хранилища через внешние селекторы
   const ingredients = useSelector(selectIngredients);
   const feedOrders = useSelector(selectFeedOrders);
   const profileOrders = useSelector(selectOrders);
+  const directOrder = useSelector(selectOrderByNumber);
 
   // Поиск конкретного заказа в общей ленте или в истории личного кабинета
   const orderData = useMemo(() => {
@@ -31,8 +37,19 @@ export const OrderInfo: FC = () => {
     );
     if (profileOrder) return profileOrder;
 
+    // Если в списках заказа нет, проверяем точечно загруженный с сервера по прямой ссылке заказ
+    if (directOrder && directOrder.number.toString() === targetNumber) {
+      return directOrder;
+    }
+
     return null;
-  }, [number, feedOrders, profileOrders]);
+  }, [number, feedOrders, profileOrders, directOrder]);
+
+  // Дозапрос данных конкретного заказа с сервера, если при прямой загрузке страницы его нет в списках стора
+  useEffect(() => {
+    if (!number || orderData) return;
+    dispatch(fetchOrderByNumber(Number(number)));
+  }, [number, orderData, dispatch]);
 
   // Трансформация данных заказа и расчет стоимости для отображения
   const orderInfo = useMemo(() => {

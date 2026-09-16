@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { orderBurgerApi, getOrdersApi } from '../../utils/burger-api';
+import {
+  orderBurgerApi,
+  getOrdersApi,
+  getOrderByNumberApi
+} from '../../utils/burger-api';
 import { TOrder } from '@utils-types';
 import { RootState } from '../store';
 
@@ -21,11 +25,22 @@ export const fetchUserOrders = createAsyncThunk(
   }
 );
 
+// Асинхронный Thunk для точечного получения конкретного заказа по его номеру
+export const fetchOrderByNumber = createAsyncThunk(
+  'order/fetchOrderByNumber',
+  async (number: number) => {
+    const res = await getOrderByNumberApi(number);
+    // Сервер возвращает массив orders, для поиска нам нужен конкретный заказ
+    return res.orders[0];
+  }
+);
+
 type TOrderState = {
   orderModalData: TOrder | null;
   orderRequest: boolean;
   orders: TOrder[];
   isHistoryLoading: boolean;
+  orderByNumber: TOrder | null; // Поле хранилища для точечно запрошенного заказа
   error: string | null;
 };
 
@@ -34,6 +49,7 @@ const initialState: TOrderState = {
   orderRequest: false,
   orders: [],
   isHistoryLoading: false,
+  orderByNumber: null,
   error: null
 };
 
@@ -74,6 +90,18 @@ const orderSlice = createSlice({
         state.isHistoryLoading = false;
         state.error =
           action.error.message || 'Не удалось загрузить историю заказов';
+      })
+
+      // Точечное получение заказа по его номеру (fetchOrderByNumber)
+      .addCase(fetchOrderByNumber.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
+        state.orderByNumber = action.payload;
+      })
+      .addCase(fetchOrderByNumber.rejected, (state, action) => {
+        state.error =
+          action.error.message || 'Не удалось загрузить заказ по номеру';
       });
   }
 });
@@ -89,5 +117,7 @@ export const selectOrderError = (state: RootState) => state.order.error;
 export const selectOrders = (state: RootState) => state.order.orders;
 export const selectIsHistoryLoading = (state: RootState) =>
   state.order.isHistoryLoading;
+export const selectOrderByNumber = (state: RootState) =>
+  state.order.orderByNumber;
 
 export default orderSlice.reducer;
