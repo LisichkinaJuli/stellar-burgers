@@ -31,6 +31,7 @@ import {
   OrderInfo,
   ProtectedRoute
 } from '@components';
+import { Preloader } from '@ui';
 import '../../index.css';
 import styles from './app.module.css';
 
@@ -41,7 +42,7 @@ const App = () => {
 
   // Получаем состояния загрузки и ошибок через импортированные селекторы
   const isIngredientsLoading = useSelector(selectIngredientsLoading);
-  const error = useSelector(selectIngredientsError);
+  const ingredientsError = useSelector(selectIngredientsError);
 
   // Запускаем проверку авторизации и загрузку ингредиентов при старте приложения
   useEffect(() => {
@@ -57,11 +58,9 @@ const App = () => {
     navigate(-1);
   };
 
-  // Проверяем соответствие текущего пути роутам заказов
+  // Динамически получаем номер заказа из URL для формирования заголовка модального окна
   const feedMatch = useMatch('/feed/:number');
   const profileOrderMatch = useMatch('/profile/orders/:number');
-
-  // Вытаскиваем номер заказа из параметров того роута, который сейчас активен
   const orderNumber =
     feedMatch?.params.number || profileOrderMatch?.params.number;
 
@@ -69,77 +68,98 @@ const App = () => {
     <div className={styles.app}>
       <AppHeader />
 
-      {/* Основные маршруты приложения */}
-      <Routes location={background || location}>
-        <Route path='/' element={<ConstructorPage />} />
-        <Route path='/feed' element={<Feed />} />
+      {/* Верхнеуровневая обработка состояний загрузки и ошибок ингредиентов */}
+      {isIngredientsLoading ? (
+        <Preloader />
+      ) : ingredientsError ? (
+        <div className={`${styles.error} text text_type_main-medium pt-4`}>
+          {ingredientsError}
+        </div>
+      ) : (
+        <>
+          {/* Основные маршруты приложения */}
+          <Routes location={background || location}>
+            <Route path='/' element={<ConstructorPage />} />
+            <Route path='/feed' element={<Feed />} />
 
-        {/* Публичные маршруты (доступны только неавторизованным пользователям) */}
-        <Route
-          path='/login'
-          element={<ProtectedRoute onlyUnAuth element={<Login />} />}
-        />
-        <Route
-          path='/register'
-          element={<ProtectedRoute onlyUnAuth element={<Register />} />}
-        />
-        <Route
-          path='/forgot-password'
-          element={<ProtectedRoute onlyUnAuth element={<ForgotPassword />} />}
-        />
-        <Route
-          path='/reset-password'
-          element={<ProtectedRoute onlyUnAuth element={<ResetPassword />} />}
-        />
+            {/* Публичные маршруты (доступны только неавторизованным пользователям) */}
+            <Route
+              path='/login'
+              element={<ProtectedRoute onlyUnAuth element={<Login />} />}
+            />
+            <Route
+              path='/register'
+              element={<ProtectedRoute onlyUnAuth element={<Register />} />}
+            />
+            <Route
+              path='/forgot-password'
+              element={
+                <ProtectedRoute onlyUnAuth element={<ForgotPassword />} />
+              }
+            />
+            <Route
+              path='/reset-password'
+              element={
+                <ProtectedRoute onlyUnAuth element={<ResetPassword />} />
+              }
+            />
 
-        {/* Защищенные маршруты (доступны только после авторизации) */}
-        <Route
-          path='/profile'
-          element={<ProtectedRoute element={<Profile />} />}
-        />
-        <Route
-          path='/profile/orders'
-          element={<ProtectedRoute element={<ProfileOrders />} />}
-        />
+            {/* Защищенные маршруты (доступны только после авторизации) */}
+            <Route
+              path='/profile'
+              element={<ProtectedRoute element={<Profile />} />}
+            />
+            <Route
+              path='/profile/orders'
+              element={<ProtectedRoute element={<ProfileOrders />} />}
+            />
 
-        {/* Отдельные страницы деталей (для открытия по прямой ссылке) */}
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
-        <Route path='/feed/:number' element={<OrderInfo />} />
-        <Route
-          path='/profile/orders/:number'
-          element={<ProtectedRoute element={<OrderInfo />} />}
-        />
-        <Route path='*' element={<NotFound404 />} />
-      </Routes>
+            {/* Отдельные страницы деталей (для открытия по прямой ссылке) */}
+            <Route path='/ingredients/:id' element={<IngredientDetails />} />
+            <Route path='/feed/:number' element={<OrderInfo />} />
+            <Route
+              path='/profile/orders/:number'
+              element={<ProtectedRoute element={<OrderInfo />} />}
+            />
+            <Route path='*' element={<NotFound404 />} />
+          </Routes>
 
-      {/* Маршруты для всплывающих модальных окон (рендерятся поверх заднего фона) */}
-      {background && (
-        <Routes>
-          <Route
-            path='/ingredients/:id'
-            element={
-              <Modal title='Детали ингредиента' onClose={handleModalClose}>
-                <IngredientDetails />
-              </Modal>
-            }
-          />
-          <Route
-            path='/feed/:number'
-            element={
-              <Modal title={`#${orderNumber || ''}`} onClose={handleModalClose}>
-                <OrderInfo />
-              </Modal>
-            }
-          />
-          <Route
-            path='/profile/orders/:number'
-            element={
-              <Modal title={`#${orderNumber || ''}`} onClose={handleModalClose}>
-                <OrderInfo />
-              </Modal>
-            }
-          />
-        </Routes>
+          {/* Маршруты для всплывающих модальных окон (рендерятся поверх заднего фона) */}
+          {background && (
+            <Routes>
+              <Route
+                path='/ingredients/:id'
+                element={
+                  <Modal title='Детали ингредиента' onClose={handleModalClose}>
+                    <IngredientDetails />
+                  </Modal>
+                }
+              />
+              <Route
+                path='/feed/:number'
+                element={
+                  <Modal
+                    title={`#${orderNumber || ''}`}
+                    onClose={handleModalClose}
+                  >
+                    <OrderInfo />
+                  </Modal>
+                }
+              />
+              <Route
+                path='/profile/orders/:number'
+                element={
+                  <Modal
+                    title={`#${orderNumber || ''}`}
+                    onClose={handleModalClose}
+                  >
+                    <OrderInfo />
+                  </Modal>
+                }
+              />
+            </Routes>
+          )}
+        </>
       )}
     </div>
   );
