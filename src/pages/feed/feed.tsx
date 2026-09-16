@@ -15,10 +15,8 @@ export const Feed: FC = () => {
   const isLoading = useSelector(selectFeedIsLoading);
 
   useEffect(() => {
-    if (orders.length === 0) {
-      dispatch(fetchFeed());
-    }
-  }, [dispatch, orders.length]);
+    dispatch(fetchFeed());
+  }, [dispatch]);
 
   const handleGetFeeds = useCallback(() => {
     dispatch(fetchFeed());
