@@ -6,10 +6,7 @@ import { RootState } from '../store';
 // Асинхронный запрос для получения списка ингредиентов с сервера
 export const fetchIngredients = createAsyncThunk(
   'ingredients/fetchIngredients',
-  async () => {
-    const data = await getIngredientsApi();
-    return data;
-  }
+  getIngredientsApi
 );
 
 type TIngredientsState = {
