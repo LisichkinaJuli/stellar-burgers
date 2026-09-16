@@ -1,8 +1,14 @@
-import { FC } from 'react';
-
+import { FC, useMemo } from 'react';
+import { useSelector } from '../../services/store';
+import {
+  selectFeedOrders,
+  selectFeedTotal,
+  selectFeedTotalToday
+} from '../../services/slices/feedSlice';
 import { TOrder } from '@utils-types';
 import { FeedInfoUI } from '../ui/feed-info';
 
+// Вспомогательная функция для фильтрации и получения номеров заказов
 const getOrders = (orders: TOrder[], status: string): number[] =>
   orders
     .filter((item) => item.status === status)
@@ -10,13 +16,23 @@ const getOrders = (orders: TOrder[], status: string): number[] =>
     .slice(0, 20);
 
 export const FeedInfo: FC = () => {
-  /** TODO: взять переменные из стора */
-  const orders: TOrder[] = [];
-  const feed = {};
+  // Получение актуальных данных из Redux хранилища с помощью селекторов
+  const orders = useSelector(selectFeedOrders);
+  const total = useSelector(selectFeedTotal);
+  const totalToday = useSelector(selectFeedTotalToday);
 
-  const readyOrders = getOrders(orders, 'done');
+  // Мемоизация объекта со статистикой заказов
+  const feed = useMemo(
+    () => ({
+      total,
+      totalToday
+    }),
+    [total, totalToday]
+  );
 
-  const pendingOrders = getOrders(orders, 'pending');
+  // Мемоизация списков готовых и находящихся в работе заказов
+  const readyOrders = useMemo(() => getOrders(orders, 'done'), [orders]);
+  const pendingOrders = useMemo(() => getOrders(orders, 'pending'), [orders]);
 
   return (
     <FeedInfoUI
