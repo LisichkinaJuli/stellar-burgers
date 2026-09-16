@@ -6,7 +6,13 @@ import {
   selectIngredientsError
 } from '../../services/slices/ingredientsSlice';
 import { checkUserAuth } from '../../services/slices/userSlice';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+  useMatch
+} from 'react-router-dom';
 import {
   ConstructorPage,
   Feed,
@@ -50,6 +56,14 @@ const App = () => {
   const handleModalClose = () => {
     navigate(-1);
   };
+
+  // Проверяем соответствие текущего пути роутам заказов
+  const feedMatch = useMatch('/feed/:number');
+  const profileOrderMatch = useMatch('/profile/orders/:number');
+
+  // Вытаскиваем номер заказа из параметров того роута, который сейчас активен
+  const orderNumber =
+    feedMatch?.params.number || profileOrderMatch?.params.number;
 
   return (
     <div className={styles.app}>
@@ -112,7 +126,7 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='Детали заказа' onClose={handleModalClose}>
+              <Modal title={`#${orderNumber || ''}`} onClose={handleModalClose}>
                 <OrderInfo />
               </Modal>
             }
@@ -120,7 +134,7 @@ const App = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title='Детали заказа' onClose={handleModalClose}>
+              <Modal title={`#${orderNumber || ''}`} onClose={handleModalClose}>
                 <OrderInfo />
               </Modal>
             }
