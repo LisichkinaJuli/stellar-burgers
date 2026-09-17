@@ -57,7 +57,10 @@ describe('Stellar Burger — Интеграционные тесты конст�
     });
 
     it('должен открывать модальное окно с деталями ингредиента', () => {
-      cy.get('[data-testid="ingredient-details"]').should('be.visible');
+      // Проверяем, что модалка видна И содержит название кликнутого ингредиента
+      cy.get('[data-testid="ingredient-details"]')
+        .should('be.visible')
+        .and('contain', 'Краторная булка N-200i');
     });
 
     it('должен закрывать модальное окно при клике на крестик', () => {
