@@ -1,0 +1,73 @@
+{
+  "success": true,
+  "name": "Флюоресцентный биомарсианский люминесцентный бургер",
+  "order": {
+    "ingredients": [
+      {
+        "_id": "643d69a5c3f7b9001cfa093d",
+        "name": "Флюоресцентная булка R2-D3",
+        "type": "bun",
+        "proteins": 44,
+        "fat": 26,
+        "carbohydrates": 85,
+        "calories": 643,
+        "price": 988,
+        "image": "https://yandex.net",
+        "image_mobile": "https://yandex.net",
+        "image_large": "https://yandex.net"
+      },
+      {
+        "_id": "643d69a5c3f7b9001cfa0941",
+        "name": "Биокотлета из марсианской Магнолии",
+        "type": "main",
+        "proteins": 44,
+        "fat": 26,
+        "carbohydrates": 85,
+        "calories": 643,
+        "price": 424,
+        "image": "https://yandex.net",
+        "image_mobile": "https://yandex.net",
+        "image_large": "https://yandex.net"
+      },
+      {
+        "_id": "643d69a5c3f7b9001cfa093e",
+        "name": "Филе Люминесцентного тетраодонтимформа",
+        "type": "main",
+        "proteins": 44,
+        "fat": 26,
+        "carbohydrates": 85,
+        "calories": 643,
+        "price": 988,
+        "image": "https://yandex.net",
+        "image_mobile": "https://yandex.net",
+        "image_large": "https://yandex.net"
+      },
+      {
+        "_id": "643d69a5c3f7b9001cfa093d",
+        "name": "Флюоресцентная булка R2-D3",
+        "type": "bun",
+        "proteins": 44,
+        "fat": 26,
+        "carbohydrates": 85,
+        "calories": 643,
+        "price": 988,
+        "image": "https://yandex.net",
+        "image_mobile": "https://yandex.net",
+        "image_large": "https://yandex.net"
+      }
+    ],
+    "_id": "66f1fc012d4dca001cba6f92",
+    "owner": {
+      "name": "Юрий Гагарин",
+      "email": "test-gagar@yandex.ru",
+      "createdAt": "2026-09-17T02:30:00.000Z",
+      "updatedAt": "2026-09-17T02:35:00.000Z"
+    },
+    "status": "done",
+    "name": "Флюоресцентный биомарсианский люминесцентный бургер",
+    "createdAt": "2026-09-17T02:36:00.000Z",
+    "updatedAt": "2026-09-17T02:36:05.000Z",
+    "number": 54791,
+    "price": 3388
+  }
+}
