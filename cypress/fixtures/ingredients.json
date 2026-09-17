@@ -1,0 +1,44 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "643d69a5c3f7b9001cfa093c",
+      "name": "Краторная булка N-200i",
+      "type": "bun",
+      "proteins": 80,
+      "fat": 24,
+      "carbohydrates": 53,
+      "calories": 420,
+      "price": 1255,
+      "image": "https://yandex.net",
+      "image_mobile": "https://yandex.net",
+      "image_large": "https://yandex.net"
+    },
+    {
+      "_id": "643d69a5c3f7b9001cfa0941",
+      "name": "Биокотлета из марсианской Магнолии",
+      "type": "main",
+      "proteins": 44,
+      "fat": 26,
+      "carbohydrates": 85,
+      "calories": 643,
+      "price": 424,
+      "image": "https://yandex.net",
+      "image_mobile": "https://yandex.net",
+      "image_large": "https://yandex.net"
+    },
+    {
+      "_id": "643d69a5c3f7b9001cfa0942",
+      "name": "Соус Spicy-X",
+      "type": "sauce",
+      "proteins": 30,
+      "fat": 20,
+      "carbohydrates": 40,
+      "calories": 30,
+      "price": 90,
+      "image": "https://yandex.net",
+      "image_mobile": "https://yandex.net",
+      "image_large": "https://yandex.net"
+    }
+  ]
+}
